@@ -458,7 +458,7 @@ function validateShortage(order, report) {
 
     for (const reportProduct of report) {
       if (orderProduct.name === reportProduct.name) {
-        if (orderProduct.number === reportProduct.number) {
+        if (orderProduct.number <= reportProduct.number) {
           isUnavailable = false;
         } else {
           number = orderProduct.number - reportProduct.number;
