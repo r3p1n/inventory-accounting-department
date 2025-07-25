@@ -18,6 +18,7 @@ window.onload = async function () {
     timer: null,
     score: 0,
     isStarted: false,
+    isLoading: true,
   }
 
   function redraw() {
@@ -53,22 +54,11 @@ function draw(ctx) {
     ctx.drawImage(overlays[i].img, overlays[i].x, overlays[i].y);
   }
 
-  if (ctx.data.timer) {
-    ctx.save();
-    ctx.font = "24px Roboto";
-    ctx.textBaseline = "top";
-    ctx.fillStyle = "#000000";
-    ctx.fillText(ctx.data.timer.getTime(), 830, 10);
-    ctx.restore();
-  }
-
   if (ctx.data.isStarted) {
-    ctx.save();
-    ctx.font = "24px Roboto";
-    ctx.textBaseline = "top";
-    ctx.fillStyle = "#000000";
-    ctx.fillText('ЗП: ' +  ctx.data.score, 10, 10);
-    ctx.restore();
+    drawText(ctx, `ЗП: ${ctx.data.score}`, 10, 10);
+    if (ctx.data.timer) drawText(ctx, ctx.data.timer.getTime(), 830, 10);
+  } else if (ctx.data.isLoading) {
+    drawText(ctx, "Загрузка...", 350, 280, 40);
   }
 }
 
@@ -172,6 +162,7 @@ async function loadImages() {
 }
 
 function initMainMenu(ctx) {
+  ctx.data.isLoading = false;
   const canvas = ctx.canvas;
   canvas.addEventListener("mousemove", (e) => onMouseMove(e, ctx), false);
   canvas.addEventListener("mousedown", (e) => onMouseDown(e, ctx), false);
@@ -476,6 +467,15 @@ function validateShortage(order, report) {
   }
 
   return { total, details: shortage };
+}
+
+function drawText(ctx, text, x, y, size = 24, color = "#000000") {
+  ctx.save();
+  ctx.font = `${size}px Roboto`;
+  ctx.textBaseline = "top";
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y);
+  ctx.restore();
 }
 
 async function createAnimateAsync(obj, s_x, s_y, f_x, f_y, t) {
